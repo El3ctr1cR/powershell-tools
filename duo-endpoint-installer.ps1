@@ -1,8 +1,8 @@
 <#
 .SYNOPSIS
-	Installeerd DUO
+	Installs DUO Security
 .DESCRIPTION
-	Dit script installeerd DUO Security op ALLEEN user endpoints, dus niet op Windows Servers.
+	This only installs DUO Security on user endpoints. So this doesn't work for Windows Servers.
 .EXAMPLE
 	PS> ./duo-endpoint-installer
 .LINK
@@ -34,14 +34,14 @@ function IsServer {
 
 
 if (IsServer) {
-    Write-Host "Dit script hoort niet uitgevoerd te worden op servers. Exiting..."
+    Write-Host "This script is not allowed to be ran on this type of system. Exiting..."
 } else {
     if (Get-WmiObject -Class Win32_Product | Where-Object {$_.Name -eq $duoAppName}) {
-    Write-Host "$duoAppName is al geinstalleerd."
+    Write-Host "$duoAppName is already installed"
     } else {
-    Write-Host "$duoAppName word nu geinstalleerd..."
+    Write-Host "$duoAppName is getting installed..."
     if (Test-Path $installPath) {
-        Write-Host "Het pad $installPath bestaat al. Overslaan..."
+        Write-Host "The PATH $installPath already exists. Skipping..."
     } else {
         mkdir $installPath
     }
@@ -53,7 +53,7 @@ if (IsServer) {
     if ($specificFileItem) {
         $destinationFolder.CopyHere($specificFileItem, 16)
     } else {
-        Write-Host "Het bestand $specificFile kon niet worden uitgepakt."
+        Write-Host "The file $downloadPath could not be extracted."
     }
     $msiPath = Join-Path $installPath $specificFile
     Start-Process msiexec.exe -ArgumentList "/i `"$msiPath`" IKEY=`"$duo_IKEY`" SKEY=`"$duo_SKEY`" HOST=`"$duo_HOST`" AUTOPUSH=`"#1`" FAILOPEN=`"#0`" ENABLEOFFLINE=`"#0`" SMARTCARD=`"#0`" RDPONLY=`"#0`" USERNAMEFORMAT=`"#2`" UAC_PROTECTMODE=`"#2`" UAC_OFFLINE=`"#0`" /qn" -Wait
