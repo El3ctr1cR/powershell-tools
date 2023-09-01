@@ -56,7 +56,7 @@ if (IsServer) {
         Write-Host "The file $downloadPath could not be extracted."
     }
     $msiPath = Join-Path $installPath $specificFile
-    Start-Process msiexec.exe -ArgumentList "/i `"$msiPath`" IKEY=`"$duo_IKEY`" SKEY=`"$duo_SKEY`" HOST=`"$duo_HOST`" AUTOPUSH=`"#1`" FAILOPEN=`"#0`" ENABLEOFFLINE=`"#0`" SMARTCARD=`"#0`" RDPONLY=`"#0`" USERNAMEFORMAT=`"#2`" UAC_PROTECTMODE=`"#2`" UAC_OFFLINE=`"#0`" /qn" -Wait
+    Start-Process msiexec.exe -ArgumentList "/i `"$msiPath`" IKEY=`"$duo_IKEY`" SKEY=`"$duo_SKEY`" HOST=`"$duo_HOST`" AUTOPUSH=`"#1`" FAILOPEN=`"#0`" ENABLEOFFLINE=`"#1`" SMARTCARD=`"#0`" RDPONLY=`"#0`" USERNAMEFORMAT=`"#2`" UAC_PROTECTMODE=`"#2`" UAC_OFFLINE=`"#0`" /qn" -Wait
     Get-ChildItem $installPath -Recurse | Remove-Item -Force
     Remove-Item $installPath
     }
