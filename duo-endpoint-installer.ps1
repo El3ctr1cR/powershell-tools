@@ -16,9 +16,9 @@ $duoAppName = "Duo Authentication for Windows Logon x64"
 $downloadUrl = "https://dl.duosecurity.com/DuoWinLogon_MSIs_Policies_and_Documentation-latest.zip"
 $downloadPath = "$installPath\DuoWinLogon.zip"
 $specificFile = "DuoWindowsLogon64.msi"
-$duo_IKEY = "DIEYD2TSESCZFUASKL0L"
-$duo_SKEY = "jI6IRqgiSNe5kv2AidDAGn2405ygikLpveUbe4b2"
-$duo_HOST = "api-ab149277.duosecurity.com"
+$duo_IKEY = ""
+$duo_SKEY = ""
+$duo_HOST = ""
 
 function IsServer {
     $serverOSVersions = @("Windows Server", "Windows Datacenter", "Windows Server Essentials", "Windows Hyper-V Server")
