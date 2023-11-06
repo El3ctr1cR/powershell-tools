@@ -16,9 +16,9 @@ $duoAppName = "Duo Authentication for Windows Logon x64"
 $downloadUrl = "https://dl.duosecurity.com/DuoWinLogon_MSIs_Policies_and_Documentation-latest.zip"
 $downloadPath = "$installPath\DuoWinLogon.zip"
 $specificFile = "DuoWindowsLogon64.msi"
-$duo_IKEY = ""
-$duo_SKEY = ""
-$duo_HOST = ""
+$duo_IKEY = "DIEYD2TSESCZFUASKL0L"
+$duo_SKEY = "jI6IRqgiSNe5kv2AidDAGn2405ygikLpveUbe4b2"
+$duo_HOST = "api-ab149277.duosecurity.com"
 
 function IsServer {
     $serverOSVersions = @("Windows Server", "Windows Datacenter", "Windows Server Essentials", "Windows Hyper-V Server")
@@ -32,32 +32,28 @@ function IsServer {
     return $false
 }
 
-
 if (IsServer) {
-    Write-Host "This script is not allowed to be ran on this type of system. Exiting..."
+    Write-Host "This script is not allowed to be run on this type of system. Exiting..."
 } else {
     if (Get-WmiObject -Class Win32_Product | Where-Object {$_.Name -eq $duoAppName}) {
-    Write-Host "$duoAppName is already installed"
+        Write-Host "$duoAppName is already installed"
     } else {
-    Write-Host "$duoAppName is getting installed..."
-    if (Test-Path $installPath) {
-        Write-Host "The PATH $installPath already exists. Skipping..."
-    } else {
-        mkdir $installPath
-    }
-    Invoke-WebRequest $downloadUrl -o $downloadPath
-    $shellApp = New-Object -ComObject Shell.Application
-    $zipFile = $shellApp.Namespace($downloadPath)
-    $destinationFolder = $shellApp.Namespace($installPath)
-    $specificFileItem = $zipFile.Items() | Where-Object { $_.Name -eq $specificFile }
-    if ($specificFileItem) {
-        $destinationFolder.CopyHere($specificFileItem, 16)
-    } else {
-        Write-Host "The file $downloadPath could not be extracted."
-    }
-    $msiPath = Join-Path $installPath $specificFile
-    Start-Process msiexec.exe -ArgumentList "/i `"$msiPath`" IKEY=`"$duo_IKEY`" SKEY=`"$duo_SKEY`" HOST=`"$duo_HOST`" AUTOPUSH=`"#1`" FAILOPEN=`"#0`" ENABLEOFFLINE=`"#1`" SMARTCARD=`"#0`" RDPONLY=`"#0`" USERNAMEFORMAT=`"#2`" UAC_PROTECTMODE=`"#2`" UAC_OFFLINE=`"#0`" /qn" -Wait
-    Get-ChildItem $installPath -Recurse | Remove-Item -Force
-    Remove-Item $installPath
+        Write-Host "$duoAppName is getting installed..."
+        if (Test-Path $installPath) {
+            Write-Host "The PATH $installPath already exists. Skipping..."
+        } else {
+            mkdir $installPath
+        }
+        Invoke-WebRequest $downloadUrl -o $downloadPath
+        
+        Add-Type -AssemblyName System.IO.Compression.FileSystem
+        [System.IO.Compression.ZipFile]::ExtractToDirectory($downloadPath, $installPath)
+
+        $msiPath = Join-Path $installPath $specificFile
+
+        Start-Process msiexec.exe -ArgumentList "/i `"$msiPath`" IKEY=`"$duo_IKEY`" SKEY=`"$duo_SKEY`" HOST=`"$duo_HOST`" AUTOPUSH=`"#1`" FAILOPEN=`"#1`" ENABLEOFFLINE=`"#1`" SMARTCARD=`"#0`" RDPONLY=`"#0`" USERNAMEFORMAT=`"#2`" UAC_PROTECTMODE=`"#2`" UAC_OFFLINE=`"#0`" /qn" -Wait
+
+        Get-ChildItem $installPath -Recurse | Remove-Item -Recurse -Force
+        Remove-Item $installPath -Recurse -Force
     }
 }
