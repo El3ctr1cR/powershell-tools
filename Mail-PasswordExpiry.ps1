@@ -20,12 +20,18 @@
 	Author: Ruben Ruitenberg
 #>
 
-if (-not (Get-Module -ListAvailable -Name Microsoft.Graph)) {
-    Install-Module Microsoft.Graph -Scope CurrentUser -Force
-}
+$RequiredModules = @('Microsoft.Graph.Users', 'Microsoft.Graph.Mail')
+foreach ($Module in $RequiredModules) {
+    if (-not (Get-Module -ListAvailable -Name $Module)) {
+        Write-Host "Installing $Module..."
+        Install-Module $Module -Scope CurrentUser -Force -ErrorAction Stop
+    }
+    else {
+        Write-Host "$Module is already installed."
+    }
 
-Import-Module Microsoft.Graph.Users
-Import-Module Microsoft.Graph.Mail
+    Import-Module $Module -ErrorAction Stop
+}
 
 $TenantId = ''
 $ClientId = ''
