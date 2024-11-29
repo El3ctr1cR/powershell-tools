@@ -2,7 +2,7 @@
 .SYNOPSIS
 	Installs DUO Security
 .DESCRIPTION
-	This only installs DUO Security on user endpoints. So this doesn't work for Windows Servers.
+	This only installs DUO Security on user endpoints through Datto RMM.
 .EXAMPLE
 	PS> ./duo-endpoint-installer
 .LINK
@@ -19,18 +19,6 @@ $specificFile = "DuoWindowsLogon64.msi"
 $duo_IKEY = $env:duo_IKEY
 $duo_SKEY = $env:duo_SKEY
 $duo_HOST = $env:duo_HOST
-
-function IsServer {
-    $serverOSVersions = @("Windows Server", "Windows Datacenter", "Windows Server Essentials", "Windows Hyper-V Server")
-    $osInfo = Get-WmiObject Win32_OperatingSystem
-    $osName = $osInfo.Caption
-    foreach ($serverOS in $serverOSVersions) {
-        if ($osName -like "*$serverOS*") {
-            return $true
-        }
-    }
-    return $false
-}
 
 if (IsServer) {
     Write-Host "This script is not allowed to be run on this type of system. Exiting..."
